@@ -1,0 +1,81 @@
+//package com.acme.ideogo.util.jwt;
+//
+//import io.jsonwebtoken.Claims;
+//import io.jsonwebtoken.Jwts;
+//import io.jsonwebtoken.SignatureAlgorithm;
+//import org.springframework.beans.factory.annotation.Value;
+//import org.springframework.security.core.userdetails.UserDetails;
+//import org.springframework.stereotype.Component;
+//
+//import java.io.Serializable;
+//import java.util.Date;
+//import java.util.HashMap;
+//import java.util.Map;
+//import java.util.function.Function;
+//
+//@Component
+//public class JwtCenter implements Serializable {
+//    public static final long JWT_TOKEN_VALIDITY = 5 * 60 * 60;
+//
+//    @Value("${jwt.secret}")
+//    private String secret;
+//
+//    private String token;
+//
+//    public JwtCenter setToken (String token){
+//        this.token = token;
+//        return this;
+//    }
+//
+//    private Claims getAllClaims(){
+//        return Jwts.parser().setSigningKey(secret).parseClaimsJws(token).getBody();
+//    }
+//
+//    public <T> T getClaim(Function<Claims, T> claimsResolver) {
+//        final Claims claims = getAllClaims();
+//        return claimsResolver.apply(claims);
+//    }
+//
+//    public String getUsername(){
+//        return getClaim(Claims::getSubject);
+//    }
+//
+//    public Date getIssuedDate() {
+//        return getClaim(Claims::getIssuedAt);
+//    }
+//
+//    public Date getExpirationDate() {
+//        return getClaim(Claims::getExpiration);
+//    }
+//
+//    private Boolean isExpired() {
+//        final Date expiration = getExpirationDate();
+//        return expiration.before(new Date());
+//    }
+//
+//    private Boolean ignoreExpiration() {
+//        return false;
+//    }
+//
+//    private Boolean canBeRefreshed() {
+//        return (!isExpired() || ignoreExpiration());
+//    }
+//
+//
+//    private String doGenerateToken(Map<String, Object> claims, String subject) {
+//        return Jwts.builder().setClaims(claims).setSubject(subject).setIssuedAt(new Date(System.currentTimeMillis()))
+//        .setExpiration(new Date(System.currentTimeMillis() + JWT_TOKEN_VALIDITY* 100))
+//        .signWith(SignatureAlgorithm.HS512, secret).compact();
+//    }
+//
+//    public String generateToken(UserDetails userDetails) {
+//        Map<String, Object> claims = new HashMap<>();
+//        return doGenerateToken(claims, userDetails.getUsername());
+//    }
+//
+//    public Boolean validate (UserDetails userdetails) {
+//        final String username = getUsername();
+//        return (username.equals(userdetails.getUsername()) && !isExpired());
+//    }
+//}
+//
